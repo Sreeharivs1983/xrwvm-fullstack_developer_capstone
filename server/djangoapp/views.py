@@ -1,4 +1,6 @@
 # Required imports
+from .models import CarMake, CarModel
+from .populate import initiate
 from django.http import JsonResponse
 from django.contrib.auth import login, logout, authenticate
 from django.contrib.auth.models import User
@@ -35,7 +37,7 @@ def login_user(request):
 # -----------------------------
 @csrf_exempt
 def logout_user(request):
-    logout(request)  # Terminate user session
+    logout(request)
     response = {"userName": ""}
     return JsonResponse(response)
 
@@ -76,3 +78,25 @@ def registration(request):
         response = {"userName": username, "error": "Already Registered"}
 
     return JsonResponse(response)
+
+
+# -----------------------------
+# GET CARS VIEW
+# -----------------------------
+def get_cars(request):
+    count = CarMake.objects.filter().count()
+    print(count)
+
+    if count == 0:
+        initiate()
+
+    car_models = CarModel.objects.select_related('car_make')
+    cars = []
+
+    for car_model in car_models:
+        cars.append({
+            "CarModel": car_model.name,
+            "CarMake": car_model.car_make.name
+        })
+
+    return JsonResponse({"CarModels": cars})
