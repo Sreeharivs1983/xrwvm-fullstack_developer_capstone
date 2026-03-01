@@ -48,7 +48,10 @@ jobs:
     - name: Install JSHint
       run: npm install jshint --global
 
+    - name: Configure JSHint (Enable ES6)
+      run: |
+        echo '{ "esversion": 6 }' > .jshintrc
+
     - name: Run JS Linter
       run: |
-        # Lint only backend JS files
         find ./server/database -name "*.js" -exec jshint {} +
